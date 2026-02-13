@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will you be my Valentine?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Pangolin&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a0a1e;
+            font-family: 'Comfortaa', cursive;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Задник */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                    radial-gradient(ellipse at 20% 50%, rgba(255, 60, 100, 0.15) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 20%, rgba(255, 120, 180, 0.1) 0%, transparent 50%),
+                    radial-gradient(ellipse at 50% 80%, rgba(200, 40, 80, 0.12) 0%, transparent 50%);
+            animation: bgPulse 8s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Серде4ке */
+        .hearts-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: var(--size);
+            animation: floatUp var(--duration) linear infinite;
+            animation-delay: var(--delay);
+            opacity: 0;
+            filter: blur(1px);
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: var(--opacity);
+            }
+            90% {
+                opacity: var(--opacity);
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Главная карточка */
+        .card {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 100, 150, 0.2);
+            border-radius: 32px;
+            padding: 60px 50px;
+            text-align: center;
+            max-width: 520px;
+            width: 90%;
+            box-shadow:
+                    0 0 60px rgba(255, 60, 100, 0.1),
+                    0 0 120px rgba(255, 60, 100, 0.05),
+                    inset 0 0 60px rgba(255, 100, 150, 0.03);
+            animation: cardAppear 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform: translateY(40px);
+            opacity: 0;
+        }
+
+        @keyframes cardAppear {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .big-heart {
+            font-size: 80px;
+            display: block;
+            margin-bottom: 24px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 60, 100, 0.5));
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+        }
+
+        .question {
+            font-family: 'Pangolin', cursive;
+            font-size: 40px;
+            color: #ffccd5;
+            margin-bottom: 40px;
+            line-height: 1.5;
+            text-shadow: 0 0 30px rgba(255, 100, 150, 0.3);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: 'Comfortaa', cursive;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 16px 48px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff3c64, #ff6b9d);
+            color: white;
+            box-shadow: 0 4px 25px rgba(255, 60, 100, 0.4);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 35px rgba(255, 60, 100, 0.6);
+        }
+
+        .btn-yes::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+
+        .btn-no {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 200, 210, 0.6);
+            border: 1px solid rgba(255, 100, 150, 0.15);
+            box-shadow: none;
+        }
+
+        .btn-no:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.05);
+        }
+
+        /* Поп-апы */
+        .virus-popup {
+            position: fixed;
+            z-index: 9999;
+            background: rgba(20, 5, 25, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 60, 100, 0.4);
+            border-radius: 16px;
+            padding: 0;
+            min-width: 320px;
+            max-width: 420px;
+            box-shadow:
+                    0 0 40px rgba(255, 60, 100, 0.2),
+                    0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: popupSpawn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            transform: scale(0);
+            cursor: move;
+            user-select: none;
+        }
+
+        @keyframes popupSpawn {
+            to { transform: scale(1); }
+        }
+
+        .popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255, 60, 100, 0.15);
+            border-radius: 16px 16px 0 0;
+            border-bottom: 1px solid rgba(255, 60, 100, 0.2);
+        }
+
+        .popup-header span {
+            font-family: 'Comfortaa', cursive;
+            font-size: 13px;
+            color: #ff6b9d;
+            font-weight: 700;
+        }
+
+        .popup-header-centered {
+            justify-content: center;
+        }
+
+        .popup-close {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 60, 100, 0.3);
+            color: #ffccd5;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .popup-close:hover {
+            background: #ff3c64;
+        }
+
+        .popup-body {
+            padding: 16px;
+        }
+
+        .popup-body video {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .popup-text {
+            font-family: 'Pangolin', cursive;
+            color: #ffccd5;
+            text-align: center;
+            margin-top: 12px;
+            font-size: 16px;
+        }
+
+        /* Да!!1! */
+        .yes-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(10, 2, 15, 0.9);
+            backdrop-filter: blur(30px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .yes-overlay .big-response {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        .yes-overlay .response-text {
+            font-family: 'Pangolin', cursive;
+            font-size: 36px;
+            color: #ffccd5;
+            text-shadow: 0 0 40px rgba(255, 60, 100, 0.5);
+        }
+
+        /* Взрыв на Да */
+        .heart-particle {
+            position: fixed;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 10001;
+            animation: heartExplode 2s ease-out forwards;
+        }
+
+        @keyframes heartExplode {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(0.5) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(720deg);
+            }
+        }
+
+        /* Курсоровые блестяшки */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 5;
+            font-size: 30px;
+            animation: sparkleFade 0.8s ease-out forwards;
+        }
+
+        @keyframes sparkleFade {
+            0% { opacity: 1; transform: scale(1) translateY(0); }
+            100% { opacity: 0; transform: scale(0) translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+
+<audio id="bgMusic" autoplay loop>
+    <source src="Rick_Astley_-_Never_Gonna_Give_You_Up_47958276.mp3" type="audio/mpeg">
+</audio>
+<script>
+    document.getElementById('bgMusic').volume = 0.15;
+</script>
+
+<!-- Летающие серде4ке -->
+<div class="hearts-bg" id="heartsBg"></div>
+
+<!-- Главни вопрос -->
+<div class="card">
+    <span class="big-heart"><img src="pogmig.gif" height="150"></span>
+    <div class="question">Will you be<br>my Valentine?</div>
+    <div class="buttons">
+        <button class="btn btn-yes" onclick="sayYes()">Да <img src="da_knopka.gif" height="35" style="vertical-align: middle; margin-bottom: 2px"></button>
+        <button class="btn btn-no" onclick="sayNo()">Нет <img src="net_knopka.gif" height="35" style="vertical-align: middle; margin-bottom: 2px"></button>
+    </div>
+</div>
+
+<script>
+
+    // Фрирен
+    const MEME_VIDEO = 'net_pidora_otvet.mp4';
+
+    // Панчи
+    const POPUP_TEXTS = [
+        'Охуел?',
+        'Не-е-е-е-е-е-ет',
+        'Ты долбаеб или да?',
+        'Тебе пизда',
+        'Пидора ответ',
+        '💀💀💀',
+    ];
+
+    // Если да (невозможно)
+    const YES_TEXT = 'Правильный ответ!!1!';
+
+    // ============================================
+
+    let popupCount = 0;
+    let popupsOnScreen = [];
+    let closeAttempts = 0;
+    const maxCloseAttempts = 10;
+
+    // Снова серде4ке
+    const heartsBg = document.getElementById('heartsBg');
+    const heartEmojis = ['💕', '💖', '💗', '💘', '💝', '♥️', '✨', '💫'];
+
+    for (let i = 0; i < 30; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart';
+        heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+        heart.style.setProperty('--size', (Math.random() * 20 + 12) + 'px');
+        heart.style.setProperty('--duration', (Math.random() * 15 + 10) + 's');
+        heart.style.setProperty('--delay', (Math.random() * 15) + 's');
+        heart.style.setProperty('--opacity', (Math.random() * 0.3 + 0.1));
+        heart.style.left = Math.random() * 100 + '%';
+        heartsBg.appendChild(heart);
+    }
+
+    // Курсор
+    document.addEventListener('mousemove', (e) => {
+        if (Math.random() > 0.5) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.textContent = ['✨', '💕', '💫', '♥️'][Math.floor(Math.random() * 4)];
+            sparkle.style.left = e.clientX + 'px';
+            sparkle.style.top = e.clientY + 'px';
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 800);
+        }
+    });
+
+    // Отказная вирусня
+    function sayNo() {
+        const count = Math.floor(Math.random() * 5) + 8; // от 8 до 12 попапов
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => spawnPopup(), i * 150);
+        }
+    }
+
+    function spawnPopup() {
+        popupCount++;
+        const popup = document.createElement('div');
+        popup.className = 'virus-popup';
+
+        const maxX = window.innerWidth - 380;
+        const maxY = window.innerHeight - 300;
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+
+        popup.style.left = x + 'px';
+        popup.style.top = y + 'px';
+
+        const text = POPUP_TEXTS[Math.floor(Math.random() * POPUP_TEXTS.length)];
+
+        popup.innerHTML = `
+            <div class="popup-header">
+                <span><img src="oshibka.gif" height=30" style="vertical-align: middle; margin-bottom: -1px"> ОШИБКА #${popupCount}</span>
+                <button class="popup-close" onclick="closePopup(this)">✕</button>
+            </div>
+            <div class="popup-body">
+                <video autoplay loop playsinline>
+                    <source src="${MEME_VIDEO}" type="video/mp4">
+                </video>
+                <div class="popup-text">${text}</div>
+            </div>
+        `;
+
+        document.body.appendChild(popup);
+
+        const video = popup.querySelector('video');
+        video.addEventListener('loadedmetadata', () => {
+            video.currentTime = Math.random() * video.duration;
+        });
+
+        popupsOnScreen.push(popup);
+
+        makeDraggable(popup);
+
+    }
+
+    function closePopup(btn) {
+        const popup = btn.closest('.virus-popup');
+        popup.remove();
+
+        closeAttempts++;
+        if (closeAttempts >= maxCloseAttempts) {
+            document.querySelectorAll('.virus-popup').forEach(p => p.remove());
+            showChangeAnswer();
+            return;
+        }
+
+        // Гидра
+        const extra = Math.floor(Math.random() * 3) + 1;
+        for (let i = 0; i < extra; i++) {
+            setTimeout(() => spawnPopup(), i * 200);
+        }
+    }
+
+    function showChangeAnswer() {
+        const popup = document.createElement('div');
+        popup.className = 'virus-popup';
+        popup.style.left = '50%';
+        popup.style.top = '50%';
+        popup.style.transform = 'translate(-50%, -50%) scale(1)';
+        popup.style.zIndex = '99999';
+        popup.style.animation = 'none';
+        popup.innerHTML = `
+            <div class="popup-header popup-header-centered">
+                <span><img src="hoches_izm.gif" height=30" style="vertical-align: middle; margin-bottom: -1px"><img src="hoches_izm.gif" height=30" style="vertical-align: middle; margin-bottom: -1px"><img src="hoches_izm.gif" height=30" style="vertical-align: middle; margin-bottom: -1px"></span>
+            </div>
+            <div class="popup-body">
+                <div class="popup-text">Хочешь изменить свой ответ?</div>
+                <div style="text-align: center; margin-top: 16px;">
+                    <button class="btn btn-yes" onclick="showPuzzle(this)" style="font-size: 16px; padding: 12px 36px;"><img src="da_ya_peredumal.gif" height=30" style="vertical-align: middle; margin-bottom: -1px"></button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(popup);
+    }
+
+    // Пазл
+    function showPuzzle() {
+        const popup = document.createElement('div');
+        popup.className = 'virus-popup';
+        popup.style.left = '50%';
+        popup.style.top = '50%';
+        popup.style.transform = 'translate(-50%, -50%) scale(1)';
+        popup.style.zIndex = '99999';
+        popup.style.minWidth = '400px';
+        popup.style.maxWidth = '500px';
+        popup.style.animation = 'none';
+
+        const gridSize = 8;
+        const totalPieces = gridSize * gridSize;
+
+        let pieces = Array.from({length: totalPieces}, (_, i) => i);
+        for (let i = pieces.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
+        }
+
+        let gridHTML = '';
+        for (let i = 0; i < totalPieces; i++) {
+            const origRow = Math.floor(pieces[i] / gridSize);
+            const origCol = pieces[i] % gridSize;
+            gridHTML += `
+                <div class="puzzle-piece" data-current="${i}" data-correct="${pieces[i]}" draggable="true" style="
+                    width: 100%;
+                    aspect-ratio: 1;
+                    background-image: url('puzzle.jpg');
+                    background-size: ${gridSize * 100}% ${gridSize * 100}%;
+                    background-position: ${origCol * (100 / (gridSize - 1))}% ${origRow * (100 / (gridSize - 1))}%;
+                    border: 1px solid rgba(255, 60, 100, 0.2);
+                    cursor: grab;
+                    border-radius: 2px;
+                    transition: transform 0.15s;
+                " onmousedown="this.style.transform='scale(1.1)'" onmouseup="this.style.transform='scale(1)'"></div>
+            `;
+        }
+
+        popup.innerHTML = `
+            <div class="popup-header popup-header-centered">
+                <span>🧩 Собери жизненный мем про себя</span>
+            </div>
+            <div class="popup-body">
+                <div class="popup-text" style="margin-bottom: 12px;">Приз: Второй шанс и хачапури</div>
+                <div id="puzzleGrid" style="
+                    display: grid;
+                    grid-template-columns: repeat(${gridSize}, 1fr);
+                    gap: 1px;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    background: rgba(255, 60, 100, 0.1);
+                ">${gridHTML}</div>
+                <div style="text-align: center; margin-top: 12px;">
+                    <span id="puzzleProgress" style="color: #ff6b9d; font-size: 13px;">0 / ${totalPieces} на месте</span>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(popup);
+
+        let draggedPiece = null;
+
+        const allPieces = popup.querySelectorAll('.puzzle-piece');
+        allPieces.forEach(piece => {
+            piece.addEventListener('dragstart', (e) => {
+                draggedPiece = piece;
+                e.dataTransfer.effectAllowed = 'move';
+                setTimeout(() => piece.style.opacity = '0.4', 0);
+            });
+
+            piece.addEventListener('dragend', () => {
+                piece.style.opacity = '1';
+                draggedPiece = null;
+            });
+
+            piece.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            });
+
+            piece.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (draggedPiece && draggedPiece !== piece) {
+                    const tempBg = piece.style.backgroundPosition;
+                    const tempCorrect = piece.dataset.correct;
+
+                    piece.style.backgroundPosition = draggedPiece.style.backgroundPosition;
+                    piece.dataset.correct = draggedPiece.dataset.correct;
+
+                    draggedPiece.style.backgroundPosition = tempBg;
+                    draggedPiece.dataset.correct = tempCorrect;
+
+                    checkPuzzle();
+                }
+            });
+        });
+    }
+
+    function checkPuzzle() {
+        const pieces = document.querySelectorAll('.puzzle-piece');
+        let correctCount = 0;
+        pieces.forEach((piece, index) => {
+            if (parseInt(piece.dataset.correct) === index) {
+                correctCount++;
+                piece.style.border = '1px solid rgba(100, 255, 100, 0.5)';
+            } else {
+                piece.style.border = '1px solid rgba(255, 60, 100, 0.2)';
+            }
+        });
+
+        const total = pieces.length;
+        document.getElementById('puzzleProgress').textContent = `${correctCount} / ${total} на месте`;
+
+        if (correctCount === total) {
+            setTimeout(() => {
+                document.querySelectorAll('.virus-popup').forEach(p => p.remove());
+                showFakeYes();
+            }, 500);
+        }
+    }
+
+    function showFakeYes() {
+        const popup = document.createElement('div');
+        popup.className = 'virus-popup';
+        popup.style.left = '50%';
+        popup.style.top = '50%';
+        popup.style.transform = 'translate(-50%, -50%) scale(1)';
+        popup.style.zIndex = '99999';
+        popup.style.animation = 'none';
+        popup.innerHTML = `
+            <div class="popup-header popup-header-centered">
+                <span> ЛАДНО </span>
+            </div>
+            <div class="popup-body">
+                <div class="popup-text">Вот твоя кнопка</div>
+                <div style="text-align: center; margin-top: 16px;">
+                    <button id="fakeBtn" class="btn btn-yes" onclick="gotcha(this)" style="font-size: 18px; padding: 14px 48px;">Да 💗</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(popup);
+    }
+
+    function gotcha(btn) {
+        btn.textContent = 'Нет 💀';
+        btn.className = 'btn btn-no';
+        btn.style.pointerEvents = 'none';
+        btn.style.fontSize = '18px';
+        btn.style.padding = '14px 48px';
+
+        setTimeout(() => {
+            const popup = btn.closest('.virus-popup');
+            popup.remove();
+
+            const gotchaPopup = document.createElement('div');
+            gotchaPopup.className = 'virus-popup';
+            gotchaPopup.style.left = '50%';
+            gotchaPopup.style.top = '50%';
+            gotchaPopup.style.transform = 'translate(-50%, -50%) scale(1)';
+            gotchaPopup.style.zIndex = '99999';
+            popup.style.animation = 'none';
+            gotchaPopup.innerHTML = `
+                <div class="popup-header popup-header-centered">
+                    <span>💀💀💀</span>
+                </div>
+                <div class="popup-body">
+                    <div class="popup-text" style="font-size: 24px;">НАЕБАЛА</div>
+                    <div style="text-align: center; margin-top: 16px;">
+                        <button class="btn btn-yes" onclick="afterGotcha(this)" style="font-size: 16px; padding: 12px 36px;">...</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(gotchaPopup);
+        }, 1000);
+    }
+
+    function afterGotcha(btn) {
+        const popup = btn.closest('.virus-popup');
+        popup.remove();
+        showFortuneWheel();
+    }
+
+    // Гача
+    function showFortuneWheel() {
+        const popup = document.createElement('div');
+        popup.className = 'virus-popup';
+        popup.style.left = '50%';
+        popup.style.top = '50%';
+        popup.style.transform = 'translate(-50%, -50%) scale(1)';
+        popup.style.zIndex = '99999';
+        popup.style.minWidth = '420px';
+        popup.style.animation = 'none';
+
+        // Сектора
+        const sectors = [
+            { label: 'Да', color: '#4a1942' },
+            { label: 'Даа', color: '#6b2158' },
+            { label: 'Дааа', color: '#4a1942' },
+            { label: 'Нет', color: '#ff3c64' },
+            { label: 'Даааа', color: '#6b2158' },
+            { label: 'Дааааа', color: '#4a1942' },
+            { label: 'Даааааа', color: '#6b2158' },
+            { label: 'Дааааааа', color: '#4a1942' },
+        ];
+
+        const correctIndex = 3;
+
+        popup.innerHTML = `
+            <div class="popup-header popup-header-centered">
+                <span> УДАЧИ </span>
+            </div>
+            <div class="popup-body">
+                <div class="popup-text" style="margin-bottom: 12px;">Выиграй шанс в казино</div>
+                <div style="position: relative; width: 300px; height: 300px; margin: 0 auto;">
+                    <div style="
+                        position: absolute;
+                        top: -16px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        font-size: 28px;
+                        z-index: 2;
+                        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+                    ">▼</div>
+                    <canvas id="wheelCanvas" width="300" height="300" style="border-radius: 50%;"></canvas>
+                </div>
+                <div style="text-align: center; margin-top: 16px;">
+                    <button id="spinBtn" class="btn btn-yes" onclick="spinWheel()" style="font-size: 16px; padding: 12px 36px;"> Let's go!!1!</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(popup);
+
+        window.wheelSectors = sectors;
+        window.wheelCorrectIndex = correctIndex;
+        window.wheelAngle = 0;
+        drawWheel(0);
+    }
+
+    function drawWheel(rotation) {
+        const canvas = document.getElementById('wheelCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const sectors = window.wheelSectors;
+        const cx = 150, cy = 150, r = 145;
+        const arc = (2 * Math.PI) / sectors.length;
+
+        ctx.clearRect(0, 0, 300, 300);
+
+        sectors.forEach((sector, i) => {
+            const startAngle = arc * i + rotation;
+            const endAngle = startAngle + arc;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, r, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = sector.color;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 100, 150, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(startAngle + arc / 2);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#ffccd5';
+            ctx.font = '600 13px Comfortaa, sans-serif';
+            ctx.fillText(sector.label, r - 12, 5);
+            ctx.restore();
+        });
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 18, 0, 2 * Math.PI);
+        ctx.fillStyle = '#1a0a1e';
+        ctx.fill();
+        ctx.strokeStyle = '#ff3c64';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    function spinWheel() {
+        const btn = document.getElementById('spinBtn');
+        btn.disabled = true;
+        btn.textContent = '🎰 Крутится...';
+        btn.style.pointerEvents = 'none';
+
+        const sectors = window.wheelSectors;
+        const arc = (2 * Math.PI) / sectors.length;
+
+        const correctIndex = window.wheelCorrectIndex;
+        const targetAngle = -(arc * correctIndex + arc / 2) - Math.PI / 2;
+        const fullSpins = 5 + Math.floor(Math.random() * 3);
+        const finalAngle = targetAngle - fullSpins * 2 * Math.PI;
+
+        const startAngle = window.wheelAngle;
+        const totalRotation = finalAngle - startAngle;
+        const duration = 4000;
+        const startTime = Date.now();
+
+        function animate() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const currentAngle = startAngle + totalRotation * eased;
+
+            drawWheel(currentAngle);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                window.wheelAngle = finalAngle;
+                setTimeout(() => {
+                    document.querySelectorAll('.virus-popup').forEach(p => p.remove());
+                    showMaze();
+                }, 1500);
+            }
+        }
+
+        animate();
+    }
+
+    function showMaze() {
+        const popup = document.createElement('div');
+        popup.className = 'virus-popup';
+        popup.style.left = '50%';
+        popup.style.top = '50%';
+        popup.style.transform = 'translate(-50%, -50%) scale(1)';
+        popup.style.zIndex = '99999';
+        popup.style.minWidth = '440px';
+        popup.style.animation = 'none';
+
+        popup.innerHTML = `
+        <div class="popup-header popup-header-centered">
+            <span>ПОСЛЕДНЕЕ ИСПЫТАНИЕ</span>
+        </div>
+        <div class="popup-body">
+            <div class="popup-text" style="margin-bottom: 12px;">Доведи 💖 до выхода</div>
+            <canvas id="mazeCanvas" width="400" height="400" style="border-radius: 8px; background: #1a0a1e; display: block; margin: 0 auto;"></canvas>
+        </div>
+    `;
+        document.body.appendChild(popup);
+
+        initMaze();
+    }
+
+    function initMaze() {
+        const canvas = document.getElementById('mazeCanvas');
+        const ctx = canvas.getContext('2d');
+        const cols = 15, rows = 15;
+        const cellW = canvas.width / cols;
+        const cellH = canvas.height / rows;
+
+        const grid = [];
+        for (let y = 0; y < rows; y++) {
+            grid[y] = [];
+            for (let x = 0; x < cols; x++) {
+                grid[y][x] = { top: true, right: true, bottom: true, left: true, visited: false };
+            }
+        }
+
+        const stack = [];
+        let current = { x: 0, y: 0 };
+        grid[0][0].visited = true;
+        stack.push(current);
+
+        while (stack.length > 0) {
+            const { x, y } = current;
+            const neighbors = [];
+            if (y > 0 && !grid[y-1][x].visited) neighbors.push({ x, y: y-1, dir: 'top' });
+            if (x < cols-1 && !grid[y][x+1].visited) neighbors.push({ x: x+1, y, dir: 'right' });
+            if (y < rows-1 && !grid[y+1][x].visited) neighbors.push({ x, y: y+1, dir: 'bottom' });
+            if (x > 0 && !grid[y][x-1].visited) neighbors.push({ x: x-1, y, dir: 'left' });
+
+            if (neighbors.length > 0) {
+                const next = neighbors[Math.floor(Math.random() * neighbors.length)];
+                if (next.dir === 'top') { grid[y][x].top = false; grid[next.y][next.x].bottom = false; }
+                if (next.dir === 'right') { grid[y][x].right = false; grid[next.y][next.x].left = false; }
+                if (next.dir === 'bottom') { grid[y][x].bottom = false; grid[next.y][next.x].top = false; }
+                if (next.dir === 'left') { grid[y][x].left = false; grid[next.y][next.x].right = false; }
+                grid[next.y][next.x].visited = true;
+                stack.push(current);
+                current = next;
+            } else {
+                current = stack.pop();
+            }
+        }
+
+        let playerX = cellW / 2;
+        let playerY = cellH / 2;
+        const playerR = Math.min(cellW, cellH) * 0.3;
+        const exitX = cols - 1;
+        const exitY = rows - 1;
+
+        let isDragging = false;
+        let offsetX = 0, offsetY = 0;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = '#ff6b9d';
+            ctx.lineWidth = 2;
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    const cx = x * cellW;
+                    const cy = y * cellH;
+                    const cell = grid[y][x];
+                    if (cell.top) { ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + cellW, cy); ctx.stroke(); }
+                    if (cell.right) { ctx.beginPath(); ctx.moveTo(cx + cellW, cy); ctx.lineTo(cx + cellW, cy + cellH); ctx.stroke(); }
+                    if (cell.bottom) { ctx.beginPath(); ctx.moveTo(cx, cy + cellH); ctx.lineTo(cx + cellW, cy + cellH); ctx.stroke(); }
+                    if (cell.left) { ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy + cellH); ctx.stroke(); }
+                }
+            }
+
+            ctx.fillStyle = 'rgba(100, 255, 100, 0.3)';
+            ctx.fillRect(exitX * cellW + 2, exitY * cellH + 2, cellW - 4, cellH - 4);
+            ctx.font = `${Math.min(cellW, cellH) * 0.6}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🏁', exitX * cellW + cellW/2, exitY * cellH + cellH/2);
+
+            ctx.font = `${playerR * 2}px sans-serif`;
+            ctx.fillText('💖', playerX, playerY);
+        }
+
+        function getCell(px, py) {
+            return { x: Math.floor(px / cellW), y: Math.floor(py / cellH) };
+        }
+
+        function canMoveTo(newX, newY) {
+            const oldCell = getCell(playerX, playerY);
+            const newCell = getCell(newX, newY);
+
+            if (newX < playerR || newX > canvas.width - playerR || newY < playerR || newY > canvas.height - playerR) return false;
+
+            if (oldCell.x === newCell.x && oldCell.y === newCell.y) return true;
+
+            const dx = newCell.x - oldCell.x;
+            const dy = newCell.y - oldCell.y;
+
+            if (Math.abs(dx) + Math.abs(dy) > 1) return false;
+
+            const cell = grid[oldCell.y][oldCell.x];
+            if (dx === 1 && cell.right) return false;
+            if (dx === -1 && cell.left) return false;
+            if (dy === 1 && cell.bottom) return false;
+            if (dy === -1 && cell.top) return false;
+
+            return true;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            const dist = Math.sqrt((mx - playerX) ** 2 + (my - playerY) ** 2);
+            if (dist < playerR + 10) {
+                isDragging = true;
+                offsetX = playerX - mx;
+                offsetY = playerY - my;
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const rect = canvas.getBoundingClientRect();
+            const newX = e.clientX - rect.left + offsetX;
+            const newY = e.clientY - rect.top + offsetY;
+
+            const steps = 5;
+            const dx = (newX - playerX) / steps;
+            const dy = (newY - playerY) / steps;
+
+            for (let i = 0; i < steps; i++) {
+                const tryX = playerX + dx;
+                const tryY = playerY + dy;
+                if (canMoveTo(tryX, tryY)) {
+                    playerX = tryX;
+                    playerY = tryY;
+                }
+            }
+
+            draw();
+
+            const cell = getCell(playerX, playerY);
+            if (cell.x === exitX && cell.y === exitY) {
+                isDragging = false;
+                setTimeout(() => {
+                    document.querySelectorAll('.virus-popup').forEach(p => p.remove());
+                    showFakeLoading();
+                }, 300);
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => { isDragging = false; });
+        canvas.addEventListener('mouseleave', () => { isDragging = false; });
+
+        draw();
+    }
+
+    function showFakeLoading() {
+        const popup = document.createElement('div');
+        popup.className = 'virus-popup';
+        popup.style.left = '50%';
+        popup.style.top = '50%';
+        popup.style.transform = 'translate(-50%, -50%) scale(1)';
+        popup.style.zIndex = '99999';
+        popup.style.animation = 'none';
+        popup.style.minWidth = '400px';
+
+        popup.innerHTML = `
+        <div class="popup-header popup-header-centered">
+            <span>⏳ Загрузка кнопки...</span>
+        </div>
+        <div class="popup-body">
+            <div class="popup-text" id="loadingText">Предзагрузка...</div>
+            <div style="
+                width: 100%;
+                height: 24px;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 12px;
+                margin-top: 12px;
+                overflow: hidden;
+                border: 1px solid rgba(255, 60, 100, 0.2);
+            ">
+                <div id="loadingBar" style="
+                    width: 0%;
+                    height: 100%;
+                    background: linear-gradient(90deg, #ff3c64, #ff6b9d);
+                    border-radius: 12px;
+                    transition: width 0.3s;
+                "></div>
+            </div>
+            <div class="popup-text" id="loadingPercent" style="font-size: 14px; margin-top: 8px;">0%</div>
+        </div>
+    `;
+        document.body.appendChild(popup);
+
+        const bar = document.getElementById('loadingBar');
+        const percent = document.getElementById('loadingPercent');
+        const text = document.getElementById('loadingText');
+
+        const messages = [
+            { at: 0, msg: 'Ищем кнопку' },
+            { at: 15, msg: 'Хрустим чипсами' },
+            { at: 30, msg: 'Смотрим мемы' },
+            { at: 50, msg: 'Чекаем тт' },
+            { at: 65, msg: 'Вроде нашли' },
+            { at: 80, msg: 'Ожидайте' },
+            { at: 90, msg: 'В конце ты получишь торт...' },
+            { at: 95, msg: 'Гладим Бублика' },
+            { at: 99, msg: 'Почти...' },
+        ];
+
+        let current = 0;
+        let msgIndex = 0;
+
+        const interval = setInterval(() => {
+            if (current < 95) {
+                current += Math.random() * 8 + 2;
+                if (current > 95) current = 95;
+            } else if (current < 99) {
+                current += Math.random() * 0.5;
+                if (current > 99) current = 99;
+            } else if (current >= 99) {
+                current = 99.9;
+                bar.style.width = current + '%';
+                percent.textContent = current.toFixed(1) + '%';
+                clearInterval(interval);
+
+                // Зависает на 99.9% потом ошибка
+                setTimeout(() => {
+                    text.textContent = '⚠️ КНОПКА УСПЕШНО УДАЛЕНА ⚠️';
+                    bar.style.background = '#ff3c64';
+                    percent.textContent = 'FAILED';
+
+                    setTimeout(() => {
+                        document.querySelectorAll('.virus-popup').forEach(p => p.remove());
+                        showFinalScreen()
+                    }, 2000);
+                }, 3000);
+
+                return;
+            }
+
+            bar.style.width = current + '%';
+            percent.textContent = Math.floor(current) + '%';
+
+            while (msgIndex < messages.length && messages[msgIndex].at <= current) {
+                text.textContent = messages[msgIndex].msg;
+                msgIndex++;
+            }
+        }, 300);
+    }
+
+    function showFinalScreen() {
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const bgPopup = document.createElement('div');
+                bgPopup.className = 'virus-popup';
+                const maxX = window.innerWidth - 380;
+                const maxY = window.innerHeight - 300;
+                bgPopup.style.left = Math.random() * maxX + 'px';
+                bgPopup.style.top = Math.random() * maxY + 'px';
+                bgPopup.innerHTML = `
+                <div class="popup-header popup-header-centered">
+                    <span>💀</span>
+                </div>
+                <div class="popup-body">
+                    <div class="popup-text" style="font-size: 24px;">...</div>
+                </div>
+            `;
+                document.body.appendChild(bgPopup);
+            }, i * 200);
+        }
+
+        setTimeout(() => {
+            const popup = document.createElement('div');
+            popup.className = 'virus-popup';
+            popup.style.left = '50%';
+            popup.style.top = '50%';
+            popup.style.transform = 'translate(-50%, -50%) scale(1)';
+            popup.style.zIndex = '99999';
+            popup.style.animation = 'none';
+            popup.innerHTML = `
+            <div class="popup-header popup-header-centered">
+                <span> СДАЮСЬ </span>
+            </div>
+            <div class="popup-body">
+                <div class="popup-text">У меня кончилась фантазия</div>
+                <div style="text-align: center; margin-top: 16px;">
+                    <button class="btn btn-yes" onclick="finalYes()" style="font-size: 18px; padding: 14px 48px;">Да 💖</button>
+                </div>
+            </div>
+        `;
+            document.body.appendChild(popup);
+        }, 2000);
+    }
+
+    function finalYes() {
+        document.querySelectorAll('.virus-popup').forEach(p => p.remove());
+        sayYes();
+    }
+    function makeDraggable(el) {
+
+        let offsetX, offsetY, isDragging = false;
+
+        el.querySelector('.popup-header').addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - el.offsetLeft;
+            offsetY = e.clientY - el.offsetTop;
+            el.style.zIndex = 10000 + popupCount;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            el.style.left = (e.clientX - offsetX) + 'px';
+            el.style.top = (e.clientY - offsetY) + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+    }
+
+    const CONGRATS_TEXTS = [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+    ];
+
+    const CONGRATS_VIDEO = 'congrats.mp4';
+
+    function sayYes() {
+        document.querySelectorAll('.virus-popup').forEach(p => p.remove());
+
+        for (let i = 0; i < 50; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart-particle';
+            heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+            heart.style.left = '50%';
+            heart.style.top = '50%';
+            heart.style.setProperty('--tx', (Math.random() - 0.5) * window.innerWidth + 'px');
+            heart.style.setProperty('--ty', (Math.random() - 0.5) * window.innerHeight + 'px');
+            heart.style.animationDelay = (Math.random() * 0.3) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 2500);
+        }
+
+        setTimeout(() => {
+            const overlay = document.createElement('div');
+            overlay.className = 'yes-overlay';
+            overlay.innerHTML = `
+                <div class="big-response"><img src="pobeda.gif" height="150"></div>
+                <div class="response-text">${YES_TEXT}</div>
+            `;
+            document.body.appendChild(overlay);
+
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                    spawnCongratsPopup(i === 0);
+                }, i * 400);
+            }
+        }, 300);
+    }
+
+    function spawnCongratsPopup(withSound) {
+        const popup = document.createElement('div');
+        popup.className = 'virus-popup';
+        popup.style.zIndex = '10001';
+        const maxX = window.innerWidth - 380;
+        const maxY = window.innerHeight - 300;
+        popup.style.left = Math.random() * maxX + 'px';
+        popup.style.top = Math.random() * maxY + 'px';
+
+        const text = CONGRATS_TEXTS[Math.floor(Math.random() * CONGRATS_TEXTS.length)];
+
+        popup.innerHTML = `
+            <div class="popup-header popup-header-centered">
+                <span>🎉 Поздравляю!</span>
+            </div>
+            <div class="popup-body">
+                <video autoplay loop ${withSound ? '' : 'muted'} playsinline>
+                    <source src="congrats.mp4" type="video/mp4">
+                </video>
+                <div class="popup-text">${text}</div>
+            </div>
+        `;
+        document.body.appendChild(popup);
+
+        const video = popup.querySelector('video');
+        video.addEventListener('loadedmetadata', () => {
+            video.currentTime = Math.random() * video.duration;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        let runawayCount = 0;
+        const maxRunaway = 5;
+        const btnYes = document.querySelector('.btn-yes');
+
+        btnYes.addEventListener('mouseover', function runaway() {
+            if (runawayCount >= maxRunaway) {
+                btnYes.removeEventListener('mouseover', runaway);
+                return;
+            }
+            runawayCount++;
+            const maxX = window.innerWidth - btnYes.offsetWidth;
+            const maxY = window.innerHeight - btnYes.offsetHeight;
+            btnYes.style.position = 'fixed';
+            btnYes.style.left = Math.random() * maxX + 'px';
+            btnYes.style.top = Math.random() * maxY + 'px';
+            btnYes.style.transition = 'all 0.3s ease';
+            btnYes.style.zIndex = '9999';
+        });
+    });
+</script>
+
+</body>
+</html>
